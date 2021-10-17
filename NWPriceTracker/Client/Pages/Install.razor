@@ -1,0 +1,21 @@
+﻿@page "/install"
+@inject HttpClient Http
+<h3>Installer</h3>
+
+@if (installStatusMsg == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p>Installation complete with status: @installStatusMsg</p>
+}
+
+@code {
+    private string? installStatusMsg = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        installStatusMsg = await Http.GetStringAsync("api/RunItemInstaller");
+    }
+}
