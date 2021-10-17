@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" Sdk="Microsoft.Docker.Sdk">
+  <PropertyGroup Label="Globals">
+    <ProjectVersion>2.1</ProjectVersion>
+    <DockerTargetOS>Linux</DockerTargetOS>
+    <ProjectGuid>810c2fa6-4ce0-4d93-b3ae-24c99b1703d3</ProjectGuid>
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
+    <DockerServiceName>nwpricetracker.server</DockerServiceName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="aaa.Database\Dockerfile" />
+    <None Include="aaa.Database\scripts\0001_init.sql" />
+    <None Include="docker-compose.override.yml">
+      <DependentUpon>docker-compose.yml</DependentUpon>
+    </None>
+    <None Include="docker-compose.yml" />
+    <None Include=".dockerignore" />
+    <None Include="NWPriceTracker.Database\Dockerfile" />
+    <None Include="NWPriceTracker.Database\scripts\0001_init.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="aaa.Database\**" />
+  </ItemGroup>
+</Project>

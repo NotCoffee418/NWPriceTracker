@@ -1,0 +1,32 @@
+version: '3.4'
+
+services:
+  nwpricetracker.server:
+    container_name: NWPriceTracker.Server
+    depends_on:
+      - db
+    ports:
+      - "9005:443" 
+    build: 
+      context: .
+      dockerfile: NWPriceTracker/Server/Dockerfile
+      args:
+      - Configuration=Debug
+
+  db:
+    container_name: NWPriceTracker.Database
+    build: 
+        context: .
+        dockerfile: NWPriceTracker.Database/Dockerfile
+    environment:
+        POSTGRES_USER: "NWPriceTracker"
+        POSTGRES_PASSWORD: "kXakVYj7WEZYQgfH"
+        POSTGRES_DB: "NWPriceTracker.Database"
+    ports:
+        - "127.0.0.1:9006:5432" 
+    volumes:
+        - dbdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  dbdata:
