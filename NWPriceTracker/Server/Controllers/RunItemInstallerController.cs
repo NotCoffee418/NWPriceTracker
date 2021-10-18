@@ -18,7 +18,7 @@ namespace NWPriceTracker.Server.Controllers
         [HttpGet]
         public async Task<string> Get()
         {
-            var allItems = await InstallationHelper.GetItemsFromForge();
+            await InstallationHelper.InstallUpdateItemsAsync();
             return "success";
         }
     }

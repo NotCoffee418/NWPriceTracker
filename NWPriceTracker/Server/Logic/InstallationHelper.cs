@@ -1,11 +1,18 @@
-﻿using Newtonsoft.Json;
-using NWPriceTracker.Shared.DbModels;
-
-namespace NWPriceTracker.Server.Logic
+﻿namespace NWPriceTracker.Server.Logic
 {
     public static class InstallationHelper
     {
-        public static async Task<List<Item>> GetItemsFromForge()
+        /// <summary>
+        /// Gets items from NewWorldForge and puts them in the database, or updates them
+        /// </summary>
+        /// <returns></returns>
+        public static async Task InstallUpdateItemsAsync()
+        {
+            var items = await GetItemsFromForgeAsync();
+            await Queries.CreateUpdateItems(items);
+        }
+
+        private static async Task<List<Item>> GetItemsFromForgeAsync()
         {
             bool hasData = false;
             List<Item> result = new();
@@ -27,7 +34,7 @@ namespace NWPriceTracker.Server.Logic
                         newItems.Add(new Item()
                         {
                             Id = row.id,
-                            Name = row.name,
+                            Name = row.title,
                             Alias = row.alias,
                             Type = row.type,
                             Category = row.category,
