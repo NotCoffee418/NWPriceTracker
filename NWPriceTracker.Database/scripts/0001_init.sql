@@ -13,6 +13,7 @@ CREATE TABLE item
     weight              decimal(8,2),
     icon                varchar(12)                     NOT NULL
 );
+CREATE INDEX idx_item_name ON item(name);
 
 CREATE TYPE area AS ENUM (
     'Brightwood',
@@ -48,5 +49,7 @@ CREATE TABLE priceentry
     -- Unique pair
     UNIQUE (targetitemid, targetarea)
 );
+CREATE INDEX idx_priceentry_priceentry ON priceentry(targetitemid);
+CREATE INDEX idx_priceentry_targetarea ON priceentry(targetarea);
 
 COMMIT;
