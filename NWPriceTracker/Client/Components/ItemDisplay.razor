@@ -1,0 +1,30 @@
+﻿<h3>ItemDisplayComponent</h3>
+
+<Div Class="row">
+	@foreach (var kvp in Data)
+	{
+		<ItemDisplayRow Item="@kvp.Key" PriceEntries="kvp.Value" />
+	}
+</Div>
+
+@code {
+	private Dictionary<Item, List<PriceEntry>> Data { get; set; } = new();
+
+	public void UpdateData(Dictionary<Item, List<PriceEntry>> data)
+	{
+		Data.Clear();
+		Data = data;
+		StateHasChanged();
+		return;
+
+		// gradually for animation
+		data
+			.ToList()
+			.ForEach(async x =>
+			{
+				data.Add(x.Key, x.Value);
+				StateHasChanged();
+				await Task.Delay(150);
+			});		
+	}
+}
