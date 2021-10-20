@@ -6,12 +6,10 @@ services:
     depends_on:
       - db
     ports:
-      - "9005:443" 
+      - "127.0.0.1:9005:80" 
     build: 
       context: .
-      dockerfile: NWPriceTracker/Server/Dockerfile
-      args:
-      - Configuration=Debug
+      dockerfile: ./NWPriceTracker/Server/Dockerfile
 
   db:
     container_name: NWPriceTracker.Database

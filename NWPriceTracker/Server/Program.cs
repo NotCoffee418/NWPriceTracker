@@ -27,8 +27,6 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
