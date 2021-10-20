@@ -1,13 +1,19 @@
-﻿<h3>ItemDisplayComponent</h3>
+﻿@inject NavigationManager NavigationManager
 
 <Div Class="row">
 	@foreach (var kvp in Data)
 	{
-		<ItemDisplayRow Item="@kvp.Key" PriceEntries="kvp.Value" />
+		<Div Class="col-12">
+			<ItemDisplayRow Item="@kvp.Key" PriceEntries="kvp.Value" />
+		</Div>
 	}
 </Div>
 
 @code {
+	// -- Fields
+	private HubConnection? hubConnection;
+
+	// -- Properties
 	private Dictionary<Item, List<PriceEntry>> Data { get; set; } = new();
 
 	public void UpdateData(Dictionary<Item, List<PriceEntry>> data)
@@ -27,4 +33,48 @@
 				await Task.Delay(150);
 			});		
 	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		// create hub connection
+		hubConnection = new HubConnectionBuilder()
+			.WithUrl(NavigationManager.ToAbsoluteUri("/hub/broadcast"))
+			.Build();
+
+		// listen for changes to PriceEntries by other users 
+		hubConnection.On<string, PriceEntry>("UpdatePriceEntry", (string user, PriceEntry pe) =>
+		{
+			// Return if we're not currently displaying the item
+			KeyValuePair<Item, List<PriceEntry>>? relevantRow = Data
+				.Where(x => x.Key.Id == pe?.TargetItemId)
+				.FirstOrDefault();
+			if (relevantRow == null)
+				return;
+
+			// Determine if this pe in priceentry list
+			List<PriceEntry> peList = relevantRow?.Value;
+			bool isKnownPriceEntry = peList
+				.Where(x => x.Id == pe?.Id)
+				.Any();
+
+			// Add or update PE
+			if (!isKnownPriceEntry)
+				peList.Add(pe);
+			else
+			{
+				// find index of pe
+				int index = peList
+					.FindIndex(x => x.Id == pe.Id);
+
+				// update value
+				peList[index] = pe;
+			}
+
+			// Update UI
+			StateHasChanged();
+        });
+
+		// enable listener
+        await hubConnection.StartAsync();
+    }
 }

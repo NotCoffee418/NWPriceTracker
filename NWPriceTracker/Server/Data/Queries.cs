@@ -2,9 +2,23 @@
 {
     public static class Queries
     {
-        public static List<Item> SearchItem(string searchQuery)
+        public static async Task<IEnumerable<Item>> SearchItem(string searchQuery, int linit = 20)
         {
-            throw new NotImplementedException();
+            using var db = NwptDb.GetConnection();
+
+            // morph search text
+            searchQuery = searchQuery
+                .Trim()
+                .ToLowerInvariant()
+                .Replace(' ', '+');
+
+            // run query
+            return await db.QueryAsync<Item>(
+                $"SELECT * FROM item WHERE to_tsvector(name) @@ to_tsquery(@SearchQuery) LIMIT {linit}",
+                new
+                {
+                    SearchQuery = searchQuery,
+                });
         }
 
         /// <summary>

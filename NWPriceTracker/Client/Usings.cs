@@ -6,3 +6,4 @@ global using NWPriceTracker.Shared.DbModels;
 global using Blazorise;
 global using Blazorise.Bootstrap;
 global using Blazorise.Icons.FontAwesome;
+global using Newtonsoft.Json;

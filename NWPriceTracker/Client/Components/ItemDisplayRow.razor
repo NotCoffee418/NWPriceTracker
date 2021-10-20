@@ -3,10 +3,11 @@
 </Card>
 
 @code {
-	[Parameter]
-	public Item Item { get; set; }
+    // -- Parameters
+    [Parameter]
+    public Item Item { get; set; }
 
-	[Parameter]
-	public List<PriceEntry> PriceEntries { get; set; } = new();
+    [Parameter]
+    public List<PriceEntry> PriceEntries { get; set; } = new();
 
 }
