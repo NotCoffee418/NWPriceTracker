@@ -1,21 +1,89 @@
 ﻿@page "/install"
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
 <h3>Installer</h3>
 
-@if (installStatusMsg == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <p>Installation complete with status: @installStatusMsg</p>
-}
+<Table>
+    <TableHeader>
+        <TableRow>
+            <TableHeaderCell>Installer</TableHeaderCell>
+            <TableHeaderCell>Run</TableHeaderCell>
+            <TableHeaderCell>Status</TableHeaderCell>
+        </TableRow>
+    </TableHeader>
+    <TableBody>
+        @foreach (InstallInfo row in installStatuses)
+        {
+            <TableRow>
+                <TableRowCell>                    
+                    @if (row.InstallStatus == InstallInfo.Status.Installing)
+                    {
+                        <SpinKit Type="SpinKitType.Chase" Size="40" Color="#666" />
+                    }
+                    else
+                    {
+                        <Button Class="btn-primary mr-2" Clicked="@(async () => RunInstaller(row))">Install</Button>
+                    } 
+                    
+                    @if (row.InstallStatus == InstallInfo.Status.Error)
+                    {
+                        <span class="oi oi-circle-x text-danger" aria-hidden="true"></span>
+                    }
+                    else if (row.InstallStatus == InstallInfo.Status.Installed)
+                    {
+                        <span class="oi oi-circle-check text-success" aria-hidden="true"></span>
+                    }
+                </TableRowCell>    
+                <TableRowCell>@row.Description</TableRowCell>            
+                <TableRowCell>
+                    @row.StatusMessage
+                </TableRowCell>
+            </TableRow>
+        }
+    </TableBody>
+</Table>
 
 @code {
-    private string? installStatusMsg = null;
+    private HubConnection? hubConnection;
+    List<InstallInfo> installStatuses = new()
+        {
+            new()
+            {
+                InstallerName = "InstallItems",
+                Description = "Install or update items from New World Forge",
+            }
+        };
 
     protected override async Task OnInitializedAsync()
     {
-        installStatusMsg = await Http.GetStringAsync("api/RunItemInstaller");
+        // create hub connection
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/hub/installer"))
+            .Build();
+        await hubConnection.StartAsync();
+    }
+
+    private async Task RunInstaller(InstallInfo ii)
+    {
+        // Indicate running
+        ii.InstallStatus = InstallInfo.Status.Installing;
+        ii.StatusMessage = "Running installer...";
+        StateHasChanged();
+
+        try
+        {
+            // run and Indicate complate
+            (bool success, ii.StatusMessage) = await hubConnection.InvokeAsync<(bool, string)>(ii.InstallerName);
+            ii.InstallStatus = success ? InstallInfo.Status.Installed : InstallInfo.Status.Error;
+        }
+        catch (Exception ex)
+        {
+            ii.InstallStatus = InstallInfo.Status.Error;
+            ii.StatusMessage = ex.Message;
+        }
+        finally
+        {
+            StateHasChanged();
+        }
     }
 }

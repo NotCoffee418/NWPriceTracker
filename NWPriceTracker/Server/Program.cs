@@ -35,6 +35,7 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<BroadcastHub>("/hub/broadcast");
     endpoints.MapHub<SearchHub>("/hub/search");
+    endpoints.MapHub<InstallerHub>("/hub/installer");
 });
 
 app.MapRazorPages();
