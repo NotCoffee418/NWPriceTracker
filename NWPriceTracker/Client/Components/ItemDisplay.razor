@@ -1,10 +1,10 @@
 ﻿@inject NavigationManager NavigationManager
 
 <Div Class="row">
-	@foreach (var kvp in Data)
+	@foreach (var row in Data)
 	{
 		<Div Class="col-12">
-			<ItemDisplayRow Item="@kvp.Key" PriceEntries="kvp.Value" />
+			<ItemDisplayRow ItemData="@row" />
 		</Div>
 	}
 </Div>
@@ -14,9 +14,9 @@
 	private HubConnection? hubConnection;
 
 	// -- Properties
-	private Dictionary<Item, List<PriceEntry>> Data { get; set; } = new();
+	private List<ItemData> Data { get; set; } = new();
 
-	public void UpdateData(Dictionary<Item, List<PriceEntry>> data)
+	public void UpdateData(List<ItemData> data)
 	{
 		Data.Clear();
 		Data = data;
@@ -28,7 +28,7 @@
 			.ToList()
 			.ForEach(async x =>
 			{
-				data.Add(x.Key, x.Value);
+				Data.Add(x);
 				StateHasChanged();
 				await Task.Delay(150);
 			});		
@@ -45,14 +45,14 @@
 		hubConnection.On<string, PriceEntry>("UpdatePriceEntry", (string user, PriceEntry pe) =>
 		{
 			// Return if we're not currently displaying the item
-			KeyValuePair<Item, List<PriceEntry>>? relevantRow = Data
-				.Where(x => x.Key.Id == pe?.TargetItemId)
+			ItemData? relevantRow = Data
+				.Where(x => x.Item.Id == pe?.TargetItemId)
 				.FirstOrDefault();
 			if (relevantRow == null)
 				return;
 
 			// Determine if this pe in priceentry list
-			List<PriceEntry> peList = relevantRow?.Value;
+			List<PriceEntry> peList = relevantRow?.PriceEntries;
 			bool isKnownPriceEntry = peList
 				.Where(x => x.Id == pe?.Id)
 				.Any();

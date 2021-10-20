@@ -36,6 +36,7 @@ app.UseRouting();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<BroadcastHub>("/hub/broadcast");
+    endpoints.MapHub<SearchHub>("/hub/search");
 });
 
 app.MapRazorPages();

@@ -1,29 +1,27 @@
-﻿<TextEdit Placeholder="Some text value..." Size="Size.Large" TextChanged="OnTextChanged" />
+﻿@inject NavigationManager NavigationManager
+<TextEdit Placeholder="Some text value..." Size="Size.Large" TextChanged="OnTextChanged" />
 
 @code {
 	[Parameter]
-	public EventCallback<Dictionary<Item, List<PriceEntry>>> OnSearchResultsChanged { get; set; }
+	public EventCallback<List<ItemData>> OnSearchResultsChanged { get; set; }
+	private HubConnection? hubConnection;
 
 
 	private async void OnTextChanged(string value)
 	{
-		// Run search and get data
-		var data = await RunSearch(value);
+		// Pose search reauest to server
+		var data = await hubConnection.InvokeAsync<List<ItemData>>("RequestSearch", value);
 
-		// Fire event
+		// Report search results
 		await OnSearchResultsChanged.InvokeAsync(data);
 	}
 
-	private async Task<Dictionary<Item, List<PriceEntry>>> RunSearch(string value)
+	protected override async Task OnInitializedAsync()
 	{
-		// todo: implement me
-		var result = new Dictionary<Item, List<PriceEntry>>()
-			{
-				{ new() { Name = "test item" }, new() },
-			};
-		if (value == "a")
-			result.Add(new() { Name = "aaa" }, new());
-
-		return result;
+		// create hub connection
+		hubConnection = new HubConnectionBuilder()
+			.WithUrl(NavigationManager.ToAbsoluteUri("/hub/search"))
+			.Build();
+        await hubConnection.StartAsync();
 	}
 }

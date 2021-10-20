@@ -9,7 +9,7 @@
         public static async Task InstallUpdateItemsAsync()
         {
             var items = await GetItemsFromForgeAsync();
-            await Queries.CreateUpdateItems(items);
+            await Queries.CreateUpdateItemsAsync(items);
         }
 
         private static async Task<List<Item>> GetItemsFromForgeAsync()

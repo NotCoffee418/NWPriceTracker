@@ -11,6 +11,6 @@
 	SearchBox searchBox;
 	ItemDisplay itemDisplay;
 
-	public void SearchResultsChangedHandler(Dictionary<Item, List<PriceEntry>> data)
+	public void SearchResultsChangedHandler(List<ItemData> data)
 		=> itemDisplay.UpdateData(data);
 }

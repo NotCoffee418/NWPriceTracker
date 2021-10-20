@@ -1,13 +1,10 @@
 ﻿<Card>
-	<CardHeader>@Item.Name</CardHeader>
+	<CardHeader>@ItemData.Item.Name</CardHeader>
 </Card>
 
 @code {
     // -- Parameters
     [Parameter]
-    public Item Item { get; set; }
-
-    [Parameter]
-    public List<PriceEntry> PriceEntries { get; set; } = new();
+    public ItemData ItemData { get; set; }
 
 }
