@@ -1,12 +1,11 @@
 ﻿@inject NavigationManager NavigationManager
-<TextEdit Placeholder="Some text value..." Size="Size.Large" TextChanged="OnTextChanged" />
+<TextEdit Placeholder="Search Items..." Size="Size.Large" TextChanged="OnTextChanged" />
 
 @code {
 	[Parameter]
 	public EventCallback<List<ItemData>> OnSearchResultsChanged { get; set; }
 	private HubConnection? hubConnection;
-
-
+	
 	private async void OnTextChanged(string value)
 	{
 		// Pose search reauest to server

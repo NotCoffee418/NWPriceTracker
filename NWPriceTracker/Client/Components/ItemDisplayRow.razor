@@ -1,5 +1,21 @@
-﻿<Card>
-	<CardHeader>@ItemData.Item.Name</CardHeader>
+﻿<Card Class="mt-2 mb-2">
+	<CardHeader TextColor=@GetTextColor()>@ItemData.Item.Name</CardHeader>
+    <CardBody>
+        <CardText>
+             <Div Class="row">
+                <Div Class="col-1 col-md-2">
+                    <img src="@("https://api.newworldforge.com" + ItemData.Item.Icon)" />
+                </Div>
+                <Div Class="col-2">
+                    <ul>
+                        <li Class="list-unstyled">Type: @ItemData.Item.Type</li>
+                        <li Class="list-unstyled">Category: @ItemData.Item.Category</li>
+                        <li Class="list-unstyled">Weight: @ItemData.Item.Weight</li>
+                    </ul>
+                </Div>
+            </Div>
+        </CardText>
+    </CardBody>
 </Card>
 
 @code {
@@ -7,4 +23,20 @@
     [Parameter]
     public ItemData ItemData { get; set; }
 
+    private TextColor GetTextColor()
+    {
+        switch (ItemData.Item.Rarity.ToLower())
+        {
+            case "common":
+                return TextColor.Muted;
+            case "uncommon":
+                return TextColor.Success;
+            case "rare":
+                return TextColor.Info;
+            case "legendary":
+                return TextColor.Warning;
+            default:
+                return TextColor.Black50;
+        }
+    }
 }
