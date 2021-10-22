@@ -44,5 +44,20 @@
             foreach (var item in data)
                 await db.QueryAsync("CALL insert_update_item(@Id, @Name, @Alias, @Type, @Category, @Description, @Rarity, @Weight, @Icon)", item);
         }
+
+        internal static async Task UpdatePriceAsync(PriceEntry pe)
+        {
+            using var db = NwptDb.GetConnection();
+            pe.UpdatedTime = DateTime.UtcNow;
+            await db.QueryAsync("UPDATE priceentry SET price = @Price, UpdatedTime = @UpdatedTime WHERE id = @Id", pe);
+        }
+
+        internal static async Task<PriceEntry> CreatePriceEntryAsync(PriceEntry pe)
+        {
+            using var db = NwptDb.GetConnection();
+            pe.UpdatedTime = DateTime.UtcNow;
+            return await db.QueryFirstAsync<PriceEntry>("INSERT INTO priceentry (targetitemid, targetarea, price, updatedtime) " +
+                "VALUES (@TargetItemId, @TargetArea, @Price, @UpdatedTime) RETURNING *", pe);
+        }
     }
 }

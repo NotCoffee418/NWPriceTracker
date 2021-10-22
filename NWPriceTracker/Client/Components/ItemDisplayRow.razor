@@ -3,15 +3,17 @@
     <CardBody>
         <CardText>
              <Div Class="row">
-                <Div Class="col-1 col-md-2">
+                <Div Class="col-1">
                     <img src="@("https://api.newworldforge.com" + ItemData.Item.Icon)" />
                 </Div>
-                <Div Class="col-2">
-                    <ul>
-                        <li Class="list-unstyled">Type: @ItemData.Item.Type</li>
-                        <li Class="list-unstyled">Category: @ItemData.Item.Category</li>
-                        <li Class="list-unstyled">Weight: @ItemData.Item.Weight</li>
-                    </ul>
+                <Div Class="col-10">
+                    @foreach (ZoneInfo zone in EmbeddedData.Zones)
+                    {
+                        <ZonePriceDisplay Zone="@zone" Data="@ItemData" PriceHubConnection="@PriceHubConnection" />
+                    }
+                </Div>
+                <Div Class="col-1">
+                    <img src="@("https://api.newworldforge.com" + ItemData.Item.Icon)" />
                 </Div>
             </Div>
         </CardText>
@@ -22,6 +24,9 @@
     // -- Parameters
     [Parameter]
     public ItemData ItemData { get; set; }
+
+    [Parameter]
+    public HubConnection PriceHubConnection { get; set; }
 
     private TextColor GetTextColor()
     {

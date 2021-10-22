@@ -1,0 +1,98 @@
+﻿<div class="col-2">
+	<Span class="d-block">@Zone.ShortName</Span>	
+		@if (Data.IsEditingEnabled)
+		{
+			<TextEdit Placeholder="Price" MaskType="MaskType.Numeric" TextChanged="@OnPriceChanged"/>
+		}
+		else
+		{
+			<Span class="d-block">@valueStr</Span>
+		}
+</div>
+
+
+@code {
+	[Parameter]
+	public ZoneInfo Zone { get; set; }
+
+	[Parameter]
+	public ItemData Data { get; set; }
+
+	[Parameter]
+	public HubConnection PriceHubConnection { get; set; }
+
+	private string valueStr = "..."; // loading
+
+	protected override void OnInitialized()
+	{
+
+		// Change value if there is a known value already		
+		PriceEntry pe = FindOwnedPriceEntry();
+		if (pe != null)
+			valueStr = pe.Price.ToString();
+		else valueStr = "?";
+
+
+		// Handle updates
+		PriceHubConnection.On<string, PriceEntry>("PriceEntryUpdated", (string user, PriceEntry pe) =>
+		{
+			// Ignore any updates not intended for us
+			if (pe.TargetItemId != Data.Item.Id || pe.TargetArea != Zone.Id)
+					return;
+
+			// Override existing pe or add to list			
+			PriceEntry existingPe = FindOwnedPriceEntry();
+				if (existingPe == null)
+					Data.PriceEntries.Add(pe);
+				else
+				{
+					int index = Data.PriceEntries.FindIndex(x => x.Id == existingPe.Id);
+					Data.PriceEntries[index] = pe;
+				}
+
+			// Update UI
+			valueStr = pe.Price.ToString();
+				StateHasChanged();
+		});
+	}
+
+	private async void OnPriceChanged(string value)
+	{
+		// Validate, parse or return
+		int newPrice;
+		if (int.TryParse(value, out newPrice))
+			return;
+
+		// Update in UI
+		valueStr = newPrice.ToString();
+
+		// Create or update PriceEntry in list
+		PriceEntry pe = FindOwnedPriceEntry();
+		if (pe == null)
+		{
+			pe = new()
+			{
+				TargetItemId = Data.Item.Id,
+				TargetArea = Zone.Id,
+				Price = newPrice,
+				UpdatedTime = DateTime.UtcNow
+			};
+			Data.PriceEntries.Add(pe);
+		}
+		else
+		{
+			int index = Data.PriceEntries.FindIndex(x => x.Id == pe.Id);
+			Data.PriceEntries[index] = pe;
+		}
+
+		// Update in database
+		await PriceHubConnection.SendAsync("UpdatePrice", pe);
+	}
+
+	private PriceEntry FindOwnedPriceEntry()
+	{
+		return Data.PriceEntries
+			.Where(x => x.TargetArea == Zone.Id)
+			.FirstOrDefault();
+	}
+}

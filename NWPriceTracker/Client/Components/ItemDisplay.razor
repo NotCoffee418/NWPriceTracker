@@ -4,7 +4,7 @@
 	@foreach (var row in Data)
 	{
 		<Div Class="col-12">
-			<ItemDisplayRow ItemData="@row" />
+			<ItemDisplayRow ItemData="@row" PriceHubConnection="@hubConnection" />
 		</Div>
 	}
 </Div>
@@ -38,41 +38,8 @@
 	{
 		// create hub connection
 		hubConnection = new HubConnectionBuilder()
-			.WithUrl(NavigationManager.ToAbsoluteUri("/hub/broadcast"))
+			.WithUrl(NavigationManager.ToAbsoluteUri("/hub/price"))
 			.Build();
-
-		// listen for changes to PriceEntries by other users 
-		hubConnection.On<string, PriceEntry>("UpdatePriceEntry", (string user, PriceEntry pe) =>
-		{
-			// Return if we're not currently displaying the item
-			ItemData? relevantRow = Data
-				.Where(x => x.Item.Id == pe?.TargetItemId)
-				.FirstOrDefault();
-			if (relevantRow == null)
-				return;
-
-			// Determine if this pe in priceentry list
-			List<PriceEntry> peList = relevantRow?.PriceEntries;
-			bool isKnownPriceEntry = peList
-				.Where(x => x.Id == pe?.Id)
-				.Any();
-
-			// Add or update PE
-			if (!isKnownPriceEntry)
-				peList.Add(pe);
-			else
-			{
-				// find index of pe
-				int index = peList
-					.FindIndex(x => x.Id == pe.Id);
-
-				// update value
-				peList[index] = pe;
-			}
-
-			// Update UI
-			StateHasChanged();
-        });
 
 		// enable listener
         await hubConnection.StartAsync();

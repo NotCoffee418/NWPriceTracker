@@ -17,30 +17,13 @@ CREATE TABLE item
 );
 CREATE INDEX idx_item_name ON item(name);
 
-CREATE TYPE area AS ENUM (
-    'Brightwood',
-    'Cutlass Keys',
-    'Ebonscale Reach',
-    'Edengrove',
-    'Everfall',
-    'First Light',
-    'Great Cleave',
-    'Monarchs Bluffs',
-    'Mourningdale',
-    'Reekwater',
-    'Restless Shore',
-    'Shattered Mountain',
-    'Weavers Fen'
-);
-
-
 -- priceentry
 CREATE TABLE priceentry
 (
     id                  bigserial                       PRIMARY KEY,
     targetitemid        integer                         NOT NULL,
-    targetarea          area                            NOT NULL,
-    price               decimal(18,2)                   NOT NULL,
+    targetarea        integer                           NOT NULL,
+    price               integer                         NOT NULL,
     updatedtime         timestamp                       NOT NULL,
 
 	
