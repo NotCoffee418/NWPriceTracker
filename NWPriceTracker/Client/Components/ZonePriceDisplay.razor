@@ -1,12 +1,12 @@
-﻿<div class="col-2">
-	<Span class="d-block">@Zone.ShortName</Span>	
+﻿<div class="col-3 d-flex mt-1 mb-1">
+	<Span class="d-inline-block mt-2 zonepricedisplay-name" Style="min-width:40px">@Zone.ShortName</Span>	
 		@if (Data.IsEditingEnabled)
 		{
-			<TextEdit Placeholder="Price" MaskType="MaskType.Numeric" TextChanged="@OnPriceChanged"/>
+			<TextEdit class="d-inline-block" Placeholder="Price" MaskType="MaskType.Numeric" TextChanged="@OnPriceChanged"/>
 		}
 		else
 		{
-			<Span class="d-block">@valueStr</Span>
+			<Span class="d-inline-block">@valueStr</Span>
 		}
 </div>
 

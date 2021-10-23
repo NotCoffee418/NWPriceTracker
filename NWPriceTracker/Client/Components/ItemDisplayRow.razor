@@ -3,17 +3,19 @@
     <CardBody>
         <CardText>
              <Div Class="row">
-                <Div Class="col-1">
+                <Div Class="col-xl-2 col-lg-3 col-md-12">
                     <img src="@("https://api.newworldforge.com" + ItemData.Item.Icon)" />
                 </Div>
-                <Div Class="col-10">
-                    @foreach (ZoneInfo zone in EmbeddedData.Zones)
-                    {
-                        <ZonePriceDisplay Zone="@zone" Data="@ItemData" PriceHubConnection="@PriceHubConnection" />
-                    }
+                <Div Class="col-xl-10 col-lg-9 col-md-12">
+                    <Div Class="row">
+                        @foreach (ZoneInfo zone in EmbeddedData.Zones)
+                        {
+                            <ZonePriceDisplay Zone="@zone" Data="@ItemData" PriceHubConnection="@PriceHubConnection" />
+                        }
+                    </Div>
                 </Div>
                 <Div Class="col-1">
-                    <img src="@("https://api.newworldforge.com" + ItemData.Item.Icon)" />
+                    F
                 </Div>
             </Div>
         </CardText>
