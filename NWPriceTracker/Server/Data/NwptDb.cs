@@ -2,6 +2,7 @@
 {
     // consts
     private const string connStr = "Server=db;Port=5432;Database=NWPriceTracker.Database;Userid=NWPriceTracker;Password=kXakVYj7WEZYQgfH;Include Error Detail=true";
+    //private const string connStr = "Server=127.0.0.1;Port=9006;Database=NWPriceTracker.Database;Userid=NWPriceTracker;Password=kXakVYj7WEZYQgfH;Include Error Detail=true";
 
     public static NpgsqlConnection GetConnection()
         => new NpgsqlConnection(connStr);

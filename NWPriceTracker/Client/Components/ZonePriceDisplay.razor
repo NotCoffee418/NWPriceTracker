@@ -54,7 +54,7 @@
 
 			// Update UI
 			valueStr = pe.Price.ToString();
-				StateHasChanged();
+			StateHasChanged();
 		});
 	}
 
@@ -62,7 +62,7 @@
 	{
 		// Validate, parse or return
 		int newPrice;
-		if (int.TryParse(value, out newPrice))
+		if (!int.TryParse(value.Replace("'", ""), out newPrice))
 			return;
 
 		// Update in UI

@@ -18,20 +18,9 @@
 
 	public void UpdateData(List<ItemData> data)
 	{
-		Data.Clear();
+		Data = new(); // full reset
 		Data = data;
-		StateHasChanged();
-		return;
-
-		// gradually for animation
-		data
-			.ToList()
-			.ForEach(async x =>
-			{
-				Data.Add(x);
-				StateHasChanged();
-				await Task.Delay(150);
-			});		
+		StateHasChanged();	
 	}
 
 	protected override async Task OnInitializedAsync()
