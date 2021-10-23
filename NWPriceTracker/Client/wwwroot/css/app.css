@@ -99,3 +99,21 @@ textarea {
   border-color: #000; }
   .form-control:focus {
     background-color: #ccc !important; }
+
+.icon-checkbox input[type=checkbox] {
+  display: none !important; }
+
+.icon-checkbox input[type=checkbox]:checked + .oi {
+  color: yellow; }
+
+.item-icon {
+  width: 140px;
+  height: 140px;
+  border: solid 2px #000;
+  padding: 6px;
+  border-radius: 6px;
+  background-color: #666; }
+
+.checkbox-lg {
+  width: 16px;
+  height: 16px; }

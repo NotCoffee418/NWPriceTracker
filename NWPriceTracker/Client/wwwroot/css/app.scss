@@ -145,3 +145,31 @@ textarea {
         background-color: $link-hover !important;
     }
 }
+
+.icon-checkbox {
+    input[type=checkbox] {
+        display: none !important;
+    }
+
+    input[type=checkbox]:checked + .oi {
+        color: yellow;
+    }
+}
+
+// --- ItemDisplay ---
+.item-icon {
+    width: 140px;
+    height: 140px;
+    border: solid 2px #000;
+    padding: 6px;
+    border-radius: 6px;
+    background-color: #666;
+}
+
+.checkbox-lg {
+    width: 16px;
+    height: 16px;
+}
+
+
+// --- /ItemDisplay ---

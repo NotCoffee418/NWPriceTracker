@@ -1,13 +1,15 @@
-﻿<div class="col-3 d-flex mt-1 mb-1">
+﻿<div class="col-3 d-flex mt-1 mb-1 align-items-center">
 	<Span class="d-inline-block mt-2 zonepricedisplay-name" Style="min-width:40px">@Zone.ShortName</Span>	
-		@if (Data.IsEditingEnabled)
-		{
-			<TextEdit class="d-inline-block" Placeholder="Price" MaskType="MaskType.Numeric" TextChanged="@OnPriceChanged"/>
-		}
-		else
-		{
-			<Span class="d-inline-block">@valueStr</Span>
-		}
+	@if (Data.IsEditingEnabled)
+	{
+		<TextEdit class="d-inline-block" Placeholder="Price" MaskType="MaskType.Numeric" TextChanged="@OnPriceChanged"/>
+	}
+	else
+	{
+		<Strong>
+			<Span class="d-inline-block mt-2 zonepricedisplay-name">@valueStr</Span>
+		</Strong>
+	}
 </div>
 
 

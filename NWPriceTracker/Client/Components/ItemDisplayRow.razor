@@ -4,7 +4,16 @@
         <CardText>
              <Div Class="row">
                 <Div Class="col-xl-2 col-lg-3 col-md-12">
-                    <img src="@("https://api.newworldforge.com" + ItemData.Item.Icon)" />
+                    <img src="@("https://api.newworldforge.com" + ItemData.Item.Icon)" class="item-icon mb-2" />
+                    <Div Style="width: 140px;">
+                        <div class="form-check d-inline">
+                          <input class="form-check-input checkbox-lg" type="checkbox" id="editCheckBox" @bind="@ItemData.IsEditingEnabled" >
+                          <label class="form-check-label" for="editCheckBox">Edit</label>
+                        </div>
+                        <label class="icon-checkbox checkbox-lg d-inline float-right">
+                            <input type="checkbox" @onchange="eventArgs => UpdateUserFavoriteState((bool)eventArgs.Value)"><span class="oi oi-star" aria-hidden="true"></span>
+                        </label>
+                    </Div>
                 </Div>
                 <Div Class="col-xl-10 col-lg-9 col-md-12">
                     <Div Class="row">
@@ -13,9 +22,6 @@
                             <ZonePriceDisplay Zone="@zone" Data="@ItemData" PriceHubConnection="@PriceHubConnection" />
                         }
                     </Div>
-                </Div>
-                <Div Class="col-1">
-                    F
                 </Div>
             </Div>
         </CardText>
@@ -45,5 +51,10 @@
             default:
                 return TextColor.Black50;
         }
+    }
+
+    private void UpdateUserFavoriteState(bool status)
+    {
+        // todo: implement me
     }
 }
