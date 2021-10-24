@@ -59,5 +59,31 @@
             return await db.QueryFirstAsync<PriceEntry>("INSERT INTO priceentry (targetitemid, targetarea, price, updatedtime) " +
                 "VALUES (@TargetItemId, @TargetArea, @Price, @UpdatedTime) RETURNING *", pe);
         }
+
+        internal static async Task<IEnumerable<Setting>> GetAllSettingsAsync()
+        {
+            using var db = NwptDb.GetConnection();
+            return await db.QueryAsync<Setting>("SELECT * FROM setting");
+        }
+
+        internal static async Task<Setting> GetSettingAsync(string settingKey)
+        {
+            using var db = NwptDb.GetConnection();
+            return await db.QueryFirstOrDefaultAsync<Setting>(
+                "SELECT * FROM setting WHERE settingkey = @SettingKey",
+                new { SettingKey = settingKey });
+        }
+
+        internal static async Task UpdateSettingAsync(string settingKey, string settingValue)
+        {
+            using var db = NwptDb.GetConnection();
+            await db.ExecuteAsync(
+                "UPDATE setting SET settingvalue = @SettingValue WHERE settingkey = @SettingKey",
+                new
+                {
+                    SettingKey = settingKey,
+                    SettingValue = settingValue
+                });
+        }
     }
 }

@@ -1,8 +1,13 @@
+// Apply database migrations if any
+await MigrationHelper.ApplyMigrations();
+
+// Start server
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddSignalR();
+builder.Services.AddRouting();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddResponseCompression(opts =>
@@ -11,7 +16,43 @@ builder.Services.AddResponseCompression(opts =>
         new[] { "application/octet-stream" });
 });
 
+// From: https://github.com/aspnet/Blazor/issues/1554
+// Adds HttpContextAccessor
+// Used to determine if a user is logged in
+// and what their username is
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<HttpContextAccessor>();
+// Required for HttpClient support in the Blazor Client project
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<HttpClient>();
+
+builder.Services
+    .AddAuthentication(options => 
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.RequireAuthenticatedSignIn = true;
+    })
+    .AddCookie()
+    .AddDiscord(options =>
+    {
+        SettingsHelper sh = new();
+        options.ClientId = sh.Get<string>("DiscordClientId");
+        options.ClientSecret = sh.Get<string>("DiscordClientSecret");
+        //options.Scope.Add("identity");
+    });
+// Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+
+    // Register other policies here
+
+});
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -29,11 +70,22 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// auth
+app.UseCookiePolicy(new CookiePolicyOptions()
+{
+    Secure = CookieSecurePolicy.Always
+});
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<PriceHub>("/hub/price");
     endpoints.MapHub<SearchHub>("/hub/search");
     endpoints.MapHub<InstallerHub>("/hub/installer");
+    endpoints.MapHub<SettingsHub>("/hub/settings");
+    endpoints.MapDefaultControllerRoute();
 });
 
 app.MapRazorPages();

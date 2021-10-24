@@ -8,6 +8,8 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using System.Linq;
 global using System.Collections.Generic;
+global using Microsoft.AspNetCore.Authentication.Cookies;
+global using Microsoft.AspNetCore.Authorization;
 
 // Packages
 global using Newtonsoft.Json;
@@ -19,3 +21,4 @@ global using Microsoft.AspNetCore.SignalR;
 global using NWPriceTracker.Shared.DbModels;
 global using NWPriceTracker.Server.Data;
 global using NWPriceTracker.Server.Logic;
+global using NWPriceTracker.Server.Data.Models;

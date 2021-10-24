@@ -1,0 +1,74 @@
+﻿@page "/settings"
+@inject NavigationManager NavigationManager
+@using NWPriceTracker.Client.Components
+
+<h3>Settings</h3>
+
+@if (settings == null)
+{
+    <SpinKit />
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in settings)
+            {
+                <tr>
+                    <td>
+                        @s.SettingKey
+                    </td>
+                    <td>
+                        <input type="checkbox" @onchange="@(e => 
+                        {
+                            settingDisplayData[s.SettingKey] = 
+                                (bool)e.Value ? settingData[s.SettingKey] : hiddenTextStr;
+                        })" />
+                        <input @bind="settingDisplayData[s.SettingKey]"></input>
+                        <button type="button" class="btn btn-primary" @onclick="@(async (e) => 
+                        {
+                            // Only save if not hidden
+                            if (settingDisplayData[s.SettingKey] != hiddenTextStr)
+                                await UpdateValueAsync(s.SettingKey, settingDisplayData[s.SettingKey]);
+                        })">Update</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code { 
+    private string hiddenTextStr = "******";
+    private List<Setting> settings;
+    private Dictionary<string, string> settingData = new();
+    private Dictionary<string, string> settingDisplayData = new();
+    private HubConnection hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // create hub connection
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/hub/settings"))
+            .Build();
+        await hubConnection.StartAsync();
+
+        settings = await hubConnection.InvokeAsync<List<Setting>>("GetAllSettings");
+        foreach (var s in settings)
+        {
+            settingData.Add(s.SettingKey, s.SettingValue);
+            settingDisplayData.Add(s.SettingKey, hiddenTextStr);
+        }        
+    }
+
+    private async Task UpdateValueAsync(string key, string val)
+    {
+        await hubConnection.InvokeAsync<List<Setting>>("UpdateSetting", key, val);      
+    }
+}

@@ -11,5 +11,10 @@ namespace NWPriceTracker.Shared.DbModels
         public int Id { get; set; }
         public string DiscordHandle { get; set; }
         public string ProfilePictureUrl { get; set; }
+
+        public static bool IsAuthorized(string email)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
