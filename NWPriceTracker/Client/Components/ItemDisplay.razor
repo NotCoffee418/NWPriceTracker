@@ -18,7 +18,8 @@
 
 	public void UpdateData(List<ItemData> data)
 	{
-		Data = new(); // full reset
+		Data = new(); // full reset		
+		StateHasChanged();
 		Data = data;
 		StateHasChanged();	
 	}
