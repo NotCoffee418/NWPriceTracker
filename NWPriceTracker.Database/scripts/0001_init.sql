@@ -39,6 +39,25 @@ CREATE TABLE priceentry
 CREATE INDEX idx_priceentry_priceentry ON priceentry(targetitemid);
 CREATE INDEX idx_priceentry_targetarea ON priceentry(targetarea);
 
+-- account
+CREATE TABLE account
+(
+    id                  serial                          PRIMARY KEY,
+    discordhandle       varchar(128)                    NOT NULL,
+    profilepictureurl   varchar(128),
+	
+    -- Unique
+    UNIQUE (discordhandle)
+);
+
+CREATE TABLE favorite
+(
+    userid              integer                         NOT NULL,
+    itemid              integer                         NOT NULL,
+
+    -- uniaue
+    UNIQUE (userid, itemid)
+);
 
 -- Procedures
 CREATE PROCEDURE insert_update_item(
