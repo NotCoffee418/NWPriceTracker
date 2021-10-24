@@ -32,7 +32,7 @@
                     ItemId = itemId,
                 });
         }
-
+        
         /// <summary>
         /// Creates or updates the items table
         /// </summary>

@@ -11,7 +11,7 @@ namespace NWPriceTracker.Shared.DbModels
         public int Id { get; set; } = 0;
         public int TargetItemId { get; set; }
         public int TargetArea { get; set; }
-        public int Price { get; set; }
+        public decimal Price { get; set; }
         public DateTime UpdatedTime { get; set; }
     }
 }

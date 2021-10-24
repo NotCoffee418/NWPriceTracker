@@ -22,8 +22,8 @@ CREATE TABLE priceentry
 (
     id                  bigserial                       PRIMARY KEY,
     targetitemid        integer                         NOT NULL,
-    targetarea        integer                           NOT NULL,
-    price               integer                         NOT NULL,
+    targetarea          integer                         NOT NULL,
+    price               numeric(18,2)                   NOT NULL,
     updatedtime         timestamp                       NOT NULL,
 
 	

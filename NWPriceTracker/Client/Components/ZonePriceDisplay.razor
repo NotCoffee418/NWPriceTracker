@@ -1,8 +1,9 @@
-﻿<div class="col-3 d-flex mt-1 mb-1 align-items-center">
+﻿@using System.Globalization
+<div class="col-3 d-flex mt-1 mb-1 align-items-center">
 	<Span class="d-inline-block mt-2 zonepricedisplay-name" Style="min-width:40px">@Zone.ShortName</Span>	
 	@if (Data.IsEditingEnabled)
 	{
-		<TextEdit class="d-inline-block" Placeholder="Price" MaskType="MaskType.Numeric" TextChanged="@OnPriceChanged"/>
+		<TextEdit Class="@((isValidInput ? "" : "is-invalid") + " d-inline-block")" Placeholder="Price" TextChanged="@OnPriceChanged"/>
 	}
 	else
 	{
@@ -24,6 +25,7 @@
 	public HubConnection PriceHubConnection { get; set; }
 
 	private string valueStr = "..."; // loading
+	bool isValidInput = true;
 
 	protected override void OnInitialized()
 	{
@@ -38,22 +40,22 @@
 		// Handle updates
 		PriceHubConnection.On<string, PriceEntry>("PriceEntryUpdated", (string user, PriceEntry pe) =>
 		{
-			// Ignore any updates not intended for us
-			if (pe.TargetItemId != Data.Item.Id || pe.TargetArea != Zone.Id)
-					return;
+		// Ignore any updates not intended for us
+		if (pe.TargetItemId != Data.Item.Id || pe.TargetArea != Zone.Id)
+				return;
 
-			// Override existing pe or add to list			
-			PriceEntry existingPe = FindOwnedPriceEntry();
-				if (existingPe == null)
-					Data.PriceEntries.Add(pe);
-				else
-				{
-					int index = Data.PriceEntries.FindIndex(x => x.Id == existingPe.Id);
-					Data.PriceEntries[index] = pe;
-				}
+		// Override existing pe or add to list			
+		PriceEntry existingPe = FindOwnedPriceEntry();
+			if (existingPe == null)
+				Data.PriceEntries.Add(pe);
+			else
+			{
+				int index = Data.PriceEntries.FindIndex(x => x.Id == existingPe.Id);
+				Data.PriceEntries[index] = pe;
+			}
 
-			// Update UI
-			valueStr = pe.Price.ToString();
+		// Update UI
+		valueStr = pe.Price.ToString();
 			StateHasChanged();
 		});
 	}
@@ -61,9 +63,13 @@
 	private async void OnPriceChanged(string value)
 	{
 		// Validate, parse or return
-		int newPrice;
-		if (!int.TryParse(value.Replace("'", ""), out newPrice))
+		decimal newPrice;
+		if (!decimal.TryParse(value.Replace("'", "").Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out newPrice))
+		{
+			isValidInput = false;
 			return;
+		}
+		else isValidInput = true;
 
 		// Update in UI
 		valueStr = newPrice.ToString();
@@ -83,6 +89,7 @@
 		}
 		else
 		{
+			pe.Price = newPrice;
 			int index = Data.PriceEntries.FindIndex(x => x.Id == pe.Id);
 			Data.PriceEntries[index] = pe;
 		}
