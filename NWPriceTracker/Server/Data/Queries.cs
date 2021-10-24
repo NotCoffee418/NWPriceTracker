@@ -42,7 +42,7 @@
         {
             using var db = NwptDb.GetConnection();
             foreach (var item in data)
-                await db.QueryAsync("CALL insert_update_item(@Id, @Name, @Alias, @Type, @Category, @Description, @Rarity, @Weight, @Icon)", item);
+                await db.QueryAsync("CALL insert_update_item(@Id, @Name, @Alias, @Type, @Category, @Description, @Rarity, @Tier, @Icon)", item);
         }
 
         internal static async Task UpdatePriceAsync(PriceEntry pe)

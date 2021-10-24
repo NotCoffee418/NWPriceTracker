@@ -7,12 +7,12 @@ CREATE TABLE item
 (
     id                  integer                         PRIMARY KEY,
     name                varchar(128)                    NOT NULL,
-    alias               varchar(128)                    NOT NULL,
+    alias               varchar(128),
     type                varchar(32)                     NOT NULL,
-    category            varchar(32)                     NOT NULL,
+    category            varchar(32),
     description         varchar(1024),
     rarity              varchar(32)                     NOT NULL,
-    weight              decimal(8,2),
+    tier                integer,
     icon                varchar(256)
 );
 CREATE INDEX idx_item_name ON item(name);
@@ -49,12 +49,12 @@ CREATE PROCEDURE insert_update_item(
     _category varchar(32),
     _description varchar(1024),
     _rarity varchar(32),
-    _weight decimal(8,2),
+    _tier integer,
     _icon varchar(64))
 LANGUAGE SQL
 AS $$
-    INSERT INTO item (id, name, alias, type, category, description, rarity, weight, icon)
-    VALUES (_id, _name, _alias, _type, _category, _description, _rarity, _weight, _icon)
+    INSERT INTO item (id, name, alias, type, category, description, rarity, tier, icon)
+    VALUES (_id, _name, _alias, _type, _category, _description, _rarity, _tier, _icon)
     ON CONFLICT (id) DO 
     UPDATE SET
         name = _name,
@@ -63,7 +63,7 @@ AS $$
         category = _category,
         description = _description,
         rarity = _rarity,
-        weight = _weight,
+        tier = _tier,
         icon = _icon
 $$;
 

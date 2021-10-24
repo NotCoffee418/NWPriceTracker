@@ -15,7 +15,7 @@ namespace NWPriceTracker.Shared.DbModels
         public string Category { get; set; }
         public string Description { get; set; }
         public string Rarity { get; set; }
-        public decimal? Weight { get; set; }
+        public int? Tier { get; set; }
         public string Icon { get; set; }
     }
 }

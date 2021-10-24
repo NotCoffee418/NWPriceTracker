@@ -39,23 +39,23 @@
 		// Handle updates
 		PriceHubConnection.On<string, PriceEntry>("PriceEntryUpdated", (string user, PriceEntry pe) =>
 		{
-		// Ignore any updates not intended for us
-		if (pe.TargetItemId != Data.Item.Id || pe.TargetArea != Zone.Id)
-				return;
+			// Ignore any updates not intended for us
+			if (pe.TargetItemId != Data.Item.Id || pe.TargetArea != Zone.Id)
+					return;
 
-		// Override existing pe or add to list			
-		PriceEntry existingPe = FindOwnedPriceEntry();
-			if (existingPe == null)
-				Data.PriceEntries.Add(pe);
-			else
-			{
-				int index = Data.PriceEntries.FindIndex(x => x.Id == existingPe.Id);
-				Data.PriceEntries[index] = pe;
-			}
+			// Override existing pe or add to list			
+			PriceEntry existingPe = FindOwnedPriceEntry();
+				if (existingPe == null)
+					Data.PriceEntries.Add(pe);
+				else
+				{
+					int index = Data.PriceEntries.FindIndex(x => x.Id == existingPe.Id);
+					Data.PriceEntries[index] = pe;
+				}
 
-		// Update UI
-		valueStr = pe.Price.ToString();
-			StateHasChanged();
+			// Update UI
+			valueStr = pe.Price.ToString();
+				StateHasChanged();
 		});
 	}
 

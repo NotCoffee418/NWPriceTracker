@@ -6,7 +6,10 @@
     /// <returns></returns>
     public async Task<(bool, string)> InstallItems()
 	{
-        await InstallationHelper.InstallUpdateItemsAsync();
+        await InstallationHelper.InstallUpdateItemsAsync(this);
         return (true, "Successfully installed items");
     }
+
+    public async Task SendStatusUpdate(string installerName, string statusMsg)
+        => await Clients.All.SendAsync("OnStatusUpdate", installerName, statusMsg);
 }

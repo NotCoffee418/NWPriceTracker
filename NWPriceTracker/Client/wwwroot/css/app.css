@@ -112,7 +112,8 @@ textarea {
   border: solid 2px #000;
   padding: 6px;
   border-radius: 6px;
-  background-color: #666; }
+  background-color: #666;
+  object-fit: contain; }
 
 .checkbox-lg {
   width: 16px;

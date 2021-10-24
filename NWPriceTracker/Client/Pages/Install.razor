@@ -50,7 +50,7 @@
             new()
             {
                 InstallerName = "InstallItems",
-                Description = "Install or update items from New World Forge",
+                Description = "Install or update items from newworldfans.com",
             }
         };
 
@@ -61,6 +61,19 @@
             .WithUrl(NavigationManager.ToAbsoluteUri("/hub/installer"))
             .Build();
         await hubConnection.StartAsync();
+
+        // Listen for status messages
+        hubConnection.On<string, string>("OnStatusUpdate", (string installerName, string statusMessage) =>
+        {
+            installStatuses
+                .Where(x => x.InstallerName == installerName)
+                .ToList()
+                .ForEach(ii =>
+                {
+                    ii.StatusMessage = statusMessage;
+                    StateHasChanged();
+                });
+        });
     }
 
     private async Task RunInstaller(InstallInfo ii)
