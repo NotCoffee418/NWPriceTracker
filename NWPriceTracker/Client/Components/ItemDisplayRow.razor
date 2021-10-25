@@ -11,7 +11,8 @@
                           <label class="form-check-label" for="editCheckBox">Edit</label>
                         </div>
                         <label class="icon-checkbox checkbox-lg d-inline float-right">
-                            <input type="checkbox" @onchange="eventArgs => UpdateUserFavoriteState((bool)eventArgs.Value)"><span class="oi oi-star" aria-hidden="true"></span>
+                            <input type="checkbox" checked="@ItemData.IsUserFavorite" @onchange="eventArgs => UpdateUserFavoriteState((bool)eventArgs.Value)">
+                            <span class="oi oi-star" aria-hidden="true"></span>
                         </label>
                     </Div>
                 </Div>
@@ -53,8 +54,8 @@
         }
     }
 
-    private void UpdateUserFavoriteState(bool status)
+    private async void UpdateUserFavoriteState(bool state)
     {
-        // todo: implement me
+        await PriceHubConnection.SendAsync("ChangeItemFavoriteState", ItemData.Item.Id, state);
     }
 }

@@ -10,6 +10,8 @@ global using System.Linq;
 global using System.Collections.Generic;
 global using Microsoft.AspNetCore.Authentication.Cookies;
 global using Microsoft.AspNetCore.Authorization;
+global using System.Security.Claims;
+
 
 // Packages
 global using Newtonsoft.Json;

@@ -1,0 +1,23 @@
+﻿@page "/favorites"
+@inject NavigationManager NavigationManager
+<h3>Favorites</h3>
+
+<ItemDisplay @ref="itemDisplay" />
+
+@code {
+	ItemDisplay itemDisplay;	
+	private HubConnection? hubConnection;
+
+	protected override async Task OnInitializedAsync()
+	{
+		// create hub connection
+		hubConnection = new HubConnectionBuilder()
+			.WithUrl(NavigationManager.ToAbsoluteUri("/hub/search"))
+			.Build();
+        await hubConnection.StartAsync();
+
+		// Get user favorites and display
+		var data = await hubConnection.InvokeAsync<List<ItemData>>("GetUserFavorites");
+		itemDisplay.UpdateData(data);
+	}
+}

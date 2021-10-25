@@ -16,4 +16,11 @@
         // Broadcast update
         await SendPriceUpdateAsync(pe);
     }
+    public async Task ChangeItemFavoriteState(int itemId, bool isFavorite)
+    {
+        var discordUser = (ClaimsIdentity)Context.User.Identity;
+        string discordHandle = discordUser.FindFirst(ClaimTypes.Name).Value + '#' +
+                discordUser.Claims.Where(x => x.Type == "urn:discord:user:discriminator").First().Value;
+        await Queries.ChangeItemFavoriteState(itemId, discordHandle, isFavorite);
+    }
 }

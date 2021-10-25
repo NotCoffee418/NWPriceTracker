@@ -43,7 +43,6 @@ public class LoginModel : PageModel
                 return Unauthorized();
             }
 
-            // Update user data
             await Queries.UpdateAccountInfoAsync(name, pfpUrl);
             
             // Authenticate as discord user

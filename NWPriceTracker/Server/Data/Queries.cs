@@ -22,6 +22,59 @@
             return result;
         }
 
+        internal static async Task<bool> IsItemFavoritedByUserAsync(int itemId, string discordHandle)
+        {
+            using var db = NwptDb.GetConnection();
+            return await db.ExecuteScalarAsync<bool>("SELECT EXISTS (" +
+                "SELECT * FROM favorite WHERE itemid = @ItemId AND userid = (" +
+                    "SELECT id FROM account WHERE LOWER(discordhandle) = LOWER(@DiscordHandle)" +
+                "))", new
+                {
+                    DiscordHandle = discordHandle,
+                    ItemId = itemId
+                });
+        }
+
+        internal static async Task ChangeItemFavoriteState(int itemId, string discordHandle, bool isFavorite)
+        {
+            using var db = NwptDb.GetConnection();
+            int userId = await db.ExecuteScalarAsync<int>(
+                "SELECT id FROM account WHERE LOWER(discordhandle) = LOWER(@DiscordHandle)",
+                new { DiscordHandle = discordHandle });
+
+            if (isFavorite)
+            {
+                await db.ExecuteAsync(
+                    "INSERT INTO favorite (itemid, userid) VALUES (@ItemId, @UserId) ON CONFLICT DO NOTHING",
+                    new
+                    {
+                        UserId = userId,
+                        ItemId = itemId
+                    });
+            }
+            else // unfavorite
+            {
+                await db.ExecuteAsync(
+                    "DELETE FROM favorite WHERE itemid = @ItemId AND userid = @UserId",
+                    new
+                    {
+                        UserId = userId,
+                        ItemId = itemId
+                    });
+            }
+        }
+
+        internal static async Task<List<Item>> GetUserFavoritesAsync(string discordHandle)
+        {
+            using var db = NwptDb.GetConnection();
+            return (await db.QueryAsync<Item>(
+                "select item.* from item " +
+                "JOIN favorite ON favorite.itemid = item.id " +
+                "JOIN account ON account.id = favorite.userid " +
+                "WHERE LOWER(account.discordhandle) = LOWER(@DiscordHandle)",
+                new { DiscordHandle = discordHandle })).ToList();
+        }
+
         public static async Task<IEnumerable<PriceEntry>> GetPriceEntriesAsync(int itemId)
 		{
             using var db = NwptDb.GetConnection();
