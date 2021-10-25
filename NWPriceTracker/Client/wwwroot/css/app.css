@@ -79,6 +79,10 @@ th {
 td {
   border: 1px solid #002f5e !important; }
 
+li {
+  background-color: #999 !important;
+  color: #000 !important; }
+
 textarea {
   background-color: #999 !important; }
 
@@ -105,6 +109,10 @@ textarea {
 
 .icon-checkbox input[type=checkbox]:checked + .oi {
   color: yellow; }
+
+.user-icon {
+  max-width: 64px;
+  max-height: 64px; }
 
 .item-icon {
   width: 140px;

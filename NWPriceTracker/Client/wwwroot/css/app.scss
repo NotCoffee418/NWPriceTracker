@@ -116,6 +116,10 @@ th {
 td {
     border: $border-dark !important;
 }
+li {
+    background-color: $bg-secondary !important;
+    color: $text-primary !important;
+}
 
 textarea {
     background-color: $bg-secondary !important;
@@ -154,6 +158,11 @@ textarea {
     input[type=checkbox]:checked + .oi {
         color: yellow;
     }
+}
+
+.user-icon {
+    max-width: 64px;
+    max-height: 64px;
 }
 
 // --- ItemDisplay ---

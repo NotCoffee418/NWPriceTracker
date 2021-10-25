@@ -52,6 +52,7 @@
             await db.QueryAsync("UPDATE priceentry SET price = @Price, UpdatedTime = @UpdatedTime WHERE id = @Id", pe);
         }
 
+
         internal static async Task<PriceEntry> CreatePriceEntryAsync(PriceEntry pe)
         {
             using var db = NwptDb.GetConnection();
@@ -83,6 +84,42 @@
                 {
                     SettingKey = settingKey,
                     SettingValue = settingValue
+                });
+        }
+
+        internal static async Task<List<Account>> GetAllAccounts()
+        {
+            using var db = NwptDb.GetConnection();
+            return (await db.QueryAsync<Account>("SELECT * FROM account")).ToList();
+        }
+
+        internal static async Task<bool> AccountIsAuthorizedAsync(string discordHandle)
+        {
+            using var db = NwptDb.GetConnection();
+            return await db.ExecuteScalarAsync<bool>(
+                "SELECT EXISTS(SELECT id FROM account WHERE LOWER(discordhandle) = LOWER(@DiscordHandle))",
+                new { DiscordHandle = discordHandle });
+        }
+
+        internal static async Task UpdateAccountInfoAsync(string discordHandle, string pfpUrl)
+        {
+            using var db = NwptDb.GetConnection();
+            await db.ExecuteAsync(
+                "UPDATE account SET profilepictureurl = @PfpUrl WHERE discordhandle = @DiscordHandle",
+                new { 
+                    DiscordHandle = discordHandle,
+                    PfpUrl = pfpUrl
+                });
+        }
+
+        internal static async Task GiveAccountAccess(string discordHandle)
+        {
+            using var db = NwptDb.GetConnection();
+            await db.ExecuteAsync(
+                "INSERT INTO account (discordhandle, profilepictureurl) VALUES (@DiscordHandle, @PfpUrl)",
+                new { 
+                    DiscordHandle = discordHandle,
+                    PfpUrl = "/img/unknown-user.png"
                 });
         }
     }

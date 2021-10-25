@@ -68,7 +68,6 @@ else
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
-
 app.UseRouting();
 
 // auth
@@ -85,6 +84,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapHub<SearchHub>("/hub/search");
     endpoints.MapHub<InstallerHub>("/hub/installer");
     endpoints.MapHub<SettingsHub>("/hub/settings");
+    endpoints.MapHub<UserHub>("/hub/user");
     endpoints.MapDefaultControllerRoute();
 });
 

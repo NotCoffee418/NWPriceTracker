@@ -1,0 +1,84 @@
+﻿@page "/users"
+@inject NavigationManager NavigationManager
+
+<h3>Users</h3>
+
+<p>
+	Anyone who has access to this website can give other people access to use it as well.<br />
+	Feel free to add the discord handle of anyone you trust (and on our server!) below.<br />
+	The price data we input is shared between all of us.
+</p>
+
+<Validation UsePattern="true" @ref="validations">
+    <TextEdit Pattern="[a-zA-Z0-9_ ]*#[0-9]{4}" Placeholder="Discord#0000" @bind-Text="@discordHandleTxt">
+        <Feedback>
+            <ValidationError>Must be a valid discord handle.</ValidationError>
+        </Feedback>
+    </TextEdit>
+</Validation>
+<Button Clicked="@AddAccountRequest" Class="btn-primary">Grant Access</Button>
+<br />
+<Span>@statusMsg</Span>
+
+<ul class="list-group list-group-flush mt-4">
+	@foreach (Account acc in UserData)
+	{
+		<li class="list-group-item">
+			<img class="img-circle user-icon" src="@acc.ProfilePictureUrl" />
+			<Strong Class="ml-2">@acc.DiscordHandle</Strong>
+		</li>
+	}
+</ul>
+
+@code {
+	public HubConnection hubConnection { get; set; }
+	public List<Account> UserData { get; set; } = new();
+	Validation validations;
+	string discordHandleTxt;
+	string statusMsg;
+
+	protected override async Task OnInitializedAsync()
+	{
+		// create hub connection
+		hubConnection = new HubConnectionBuilder()
+			.WithUrl(NavigationManager.ToAbsoluteUri("/hub/user"))
+			.Build();
+
+		// enable listener
+		await hubConnection.StartAsync();
+
+		// display users
+		await RefreshUsersAsync();
+	}
+
+	private async Task RefreshUsersAsync()
+	{
+		UserData = await hubConnection.InvokeAsync<List<Account>>("GetAllAccounts");
+	}
+
+	private async void AddAccountRequest()
+	{
+		if (validations.Status == ValidationStatus.Success)
+		{
+			string newDiscordHandle = discordHandleTxt;
+			discordHandleTxt = string.Empty;
+			validations.Status = ValidationStatus.None;	
+
+			try
+			{
+				await hubConnection.SendAsync("GiveAccountAccess", newDiscordHandle);
+				statusMsg = "Granted access to " + newDiscordHandle;
+			}
+			catch
+			{
+				statusMsg = "Failed to grant access to " + newDiscordHandle;
+			}
+			finally
+			{
+				await RefreshUsersAsync();
+				StateHasChanged();
+			}
+
+		}
+	}
+}

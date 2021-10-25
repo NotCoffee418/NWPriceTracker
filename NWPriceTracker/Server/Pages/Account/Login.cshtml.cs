@@ -29,18 +29,22 @@ public class LoginModel : PageModel
         var discordUser = this.User.Identities.FirstOrDefault();
         if (discordUser.IsAuthenticated)
         {
-            // Get email address
+            // Get discord user info
             string name = discordUser.FindFirst(ClaimTypes.Name).Value + '#' + 
                 discordUser.Claims.Where(x => x.Type == "urn:discord:user:discriminator").First().Value;
             string pfpUrl = discordUser.Claims.Where(x => x.Type == "urn:discord:avatar:url").First().Value;
 
             // Throw error for unauthorized accounts
-            if (!Account.IsAuthorized(name))
+            bool isAuthorized = await Queries.AccountIsAuthorizedAsync(name);
+            if (!isAuthorized)
             {
                 await HttpContext.SignOutAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme);
                 return Unauthorized();
             }
+
+            // Update user data
+            await Queries.UpdateAccountInfoAsync(name, pfpUrl);
             
             // Authenticate as discord user
             var authProperties = new AuthenticationProperties
