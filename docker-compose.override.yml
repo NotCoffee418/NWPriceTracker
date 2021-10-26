@@ -4,8 +4,8 @@ services:
   nwpricetracker.server:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_URLS=http://+:80
     ports:
-      - "443"
+      - "80"
     volumes:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

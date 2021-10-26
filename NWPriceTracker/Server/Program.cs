@@ -66,14 +66,15 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseRouting();
 
 // auth
-app.UseCookiePolicy();
+app.UseCookiePolicy(new CookiePolicyOptions()
+{
+    Secure = CookieSecurePolicy.Always
+});
 app.UseAuthentication();
 app.UseAuthorization();
 
