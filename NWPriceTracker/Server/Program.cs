@@ -1,7 +1,11 @@
-// Apply database migrations if any
-await MigrationHelper.ApplyMigrations();
 
-// Start server
+
+
+// -- DATABASE MIGRATIONS
+await MigrationHelper.ApplyMigrations(); 
+
+
+// -- Start server
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

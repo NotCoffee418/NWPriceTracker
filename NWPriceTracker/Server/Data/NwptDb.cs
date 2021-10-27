@@ -1,9 +1,16 @@
 ﻿public static class NwptDb
 {
-    // consts
-    private const string connStr = "Server=db;Port=5432;Database=NWPriceTracker.Database;Userid=NWPriceTracker;Password=kXakVYj7WEZYQgfH;Include Error Detail=true";
-    //private const string connStr = "Server=127.0.0.1;Port=9006;Database=NWPriceTracker.Database;Userid=NWPriceTracker;Password=kXakVYj7WEZYQgfH;Include Error Detail=true";
+    static NwptDb()
+    {
+        // -- CONFIG
+        var config = new ConfigurationBuilder()
+                 .AddJsonFile("appsettings.json", optional: false)
+                 .Build();
+        config.GetSection("Database").Bind(DatabaseConfig);
+    }
+
+    private static DatabaseConfig DatabaseConfig { get; set; } = new();
 
     public static NpgsqlConnection GetConnection()
-        => new NpgsqlConnection(connStr);
+        => new NpgsqlConnection(DatabaseConfig.ConnectionString);
 }

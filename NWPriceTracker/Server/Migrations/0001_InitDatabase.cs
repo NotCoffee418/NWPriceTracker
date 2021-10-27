@@ -1,4 +1,10 @@
-﻿BEGIN;
+﻿namespace NWPriceTracker.Server.Migrations
+{
+    public class _0001_InitDatabase : IMigration
+    {
+        public int DbVersion => 1;
+
+        public string UpgradeSql => @"
 -- INFO:
 -- New files will be run as new revision automatically after registering in Dockerfile
 
@@ -29,31 +35,31 @@ CREATE TABLE priceentry
 	
     -- FK: item
     CONSTRAINT priceentry_item_fk FOREIGN KEY (targetitemid)
-        REFERENCES item ("id") MATCH SIMPLE
+        REFERENCES item (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
 
     -- Unique pair
-    UNIQUE (targetitemid, targetarea)
+    UNIQUE(targetitemid, targetarea)
 );
 CREATE INDEX idx_priceentry_priceentry ON priceentry(targetitemid);
-CREATE INDEX idx_priceentry_targetarea ON priceentry(targetarea);
+        CREATE INDEX idx_priceentry_targetarea ON priceentry(targetarea);
 
 -- account
 CREATE TABLE account
 (
-    id                  serial                          PRIMARY KEY,
-    discordhandle       varchar(128)                    NOT NULL,
-    profilepictureurl   varchar(128),
+    id serial                          PRIMARY KEY,
+    discordhandle varchar(128)                    NOT NULL,
+profilepictureurl   varchar(128),
 	
     -- Unique
-    UNIQUE (discordhandle)
+    UNIQUE(discordhandle)
 );
 
 CREATE TABLE favorite
 (
-    userid              integer                         NOT NULL,
-    itemid              integer                         NOT NULL,
+    userid integer                         NOT NULL,
+    itemid integer                         NOT NULL,
 
     -- uniaue
     UNIQUE (userid, itemid)
@@ -72,18 +78,19 @@ CREATE PROCEDURE insert_update_item(
     _icon varchar(64))
 LANGUAGE SQL
 AS $$
-    INSERT INTO item (id, name, alias, type, category, description, rarity, tier, icon)
-    VALUES (_id, _name, _alias, _type, _category, _description, _rarity, _tier, _icon)
-    ON CONFLICT (id) DO 
-    UPDATE SET
-        name = _name,
-        alias = _alias,
-        type = _type,
-        category = _category,
-        description = _description,
-        rarity = _rarity,
-        tier = _tier,
-        icon = _icon
+    INSERT INTO item(id, name, alias, type, category, description, rarity, tier, icon)
+    VALUES(_id, _name, _alias, _type, _category, _description, _rarity, _tier, _icon)
+    ON CONFLICT(id) DO
+   UPDATE SET
+       name = _name,
+       alias = _alias,
+       type = _type,
+       category = _category,
+       description = _description,
+       rarity = _rarity,
+       tier = _tier,
+       icon = _icon
 $$;
-
-COMMIT;
+        ";
+    }
+}
