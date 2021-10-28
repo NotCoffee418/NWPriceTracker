@@ -1,5 +1,7 @@
 ﻿<div class="col-3 d-flex mt-1 mb-1 align-items-center">
-	<Span class="d-inline-block mt-2 zonepricedisplay-name" Style="min-width:40px">@Zone.ShortName</Span>	
+	<Tooltip Text=@Zone.FullName>
+		<Span class="d-inline-block mt-2 zonepricedisplay-name" Style="min-width:40px">@Zone.ShortName</Span>	
+	</Tooltip>
 	@if (Data.IsEditingEnabled)
 	{
 		<TextEdit Class="@((isValidInput ? "" : "is-invalid") + " d-inline-block")" Placeholder="Price" TextChanged="@OnPriceChanged" Text="@valueStr" />
