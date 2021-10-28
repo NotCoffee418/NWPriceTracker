@@ -3,7 +3,7 @@
     public async Task SendPriceUpdateAsync(PriceEntry pe)
     {
         // tmp disabled, causes issues
-        //await Clients.All.SendAsync("PriceEntryUpdated", pe);
+        await Clients.All.SendAsync("PriceEntryUpdated", pe);
     }
 
     public async Task UpdatePrice(PriceEntry pe)
