@@ -1,5 +1,5 @@
 # NWPriceTracker
-New World Price Tracker is a self-hosted web platformwhich allows you to keep track of prices in all trading zones for the game New World.  
+New World Price Tracker is a self-hosted web platform which allows you to keep track of prices in all trading zones for the game New World.  
 It can help you determine where to buy and sell your items, or assist with arbitrage trading decisions.
 
 This application was made for personal use for me and my friends, but there are instructions below on how you can set up your own instance of the application.
