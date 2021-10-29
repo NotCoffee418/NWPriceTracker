@@ -6,11 +6,13 @@
 	{
 		<TextEdit Class="@((isValidInput ? "" : "is-invalid") + " d-inline-block")" Placeholder="Price" TextChanged="@OnPriceChanged" Text="@valueStr" />
 	}
-	else
+	else if (priceEntry != null)
 	{
-		<Strong>
-			<Span class="d-inline-block mt-2 zonepricedisplay-name">@valueStr</Span>
-		</Strong>
+		<Tooltip Text=@updateTimeText onmouseover="@(() => RefreshUpdateTimeDisplay())">
+			<Strong>
+				<Span class="d-inline-block mt-2 zonepricedisplay-name">@valueStr</Span>
+			</Strong>
+		</Tooltip>
 	}
 </div>
 
@@ -27,16 +29,20 @@
 
 	private string valueStr = "..."; // loading
 	bool isValidInput = true;
+	string updateTimeText = "Last Update: ??";
+	DateTime? lastUpdateTime = null;
+	PriceEntry? priceEntry;
 
 	protected override void OnInitialized()
 	{
-
 		// Change value if there is a known value already		
-		PriceEntry pe = FindOwnedPriceEntry();
-		if (pe != null)
-			valueStr = pe.Price.ToString();
+		priceEntry = FindOwnedPriceEntry();
+		if (priceEntry != null)
+		{
+			valueStr = priceEntry.Price.ToString();
+			lastUpdateTime = priceEntry.UpdatedTime;
+		}		
 		else valueStr = "?";
-
 
 		// Handle updates
 		PriceHubConnection.On<string, PriceEntry>("PriceEntryUpdated", (string user, PriceEntry pe) =>
@@ -55,8 +61,12 @@
 				Data.PriceEntries[index] = pe;
 			}
 
+		// Update time
+		lastUpdateTime = pe.UpdatedTime;
+
 		// Update UI
-		valueStr = pe.Price.ToString();
+		priceEntry = pe;
+			valueStr = pe.Price.ToString();
 			StateHasChanged();
 		});
 	}
@@ -100,6 +110,10 @@
 			Data.PriceEntries[index] = pe;
 		}
 
+		// update priceEntry in UI
+		lastUpdateTime = DateTime.UtcNow;
+		priceEntry = pe;
+
 		// Update in database
 		await PriceHubConnection.SendAsync("UpdatePrice", pe);
 	}
@@ -109,5 +123,13 @@
 		return Data.PriceEntries
 			.Where(x => x.TargetArea == Zone.Id)
 			.FirstOrDefault();
+	}
+
+	private void RefreshUpdateTimeDisplay()
+	{
+		string humanTime = "??";
+		if (lastUpdateTime.HasValue)
+			humanTime = lastUpdateTime.Value.Humanize();
+		updateTimeText = $"Last Updat: {humanTime}";
 	}
 }

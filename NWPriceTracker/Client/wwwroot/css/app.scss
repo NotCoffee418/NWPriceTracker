@@ -2,6 +2,7 @@
 $bg-primary: #2e2e2e;
 $bg-secondary: #999;
 $text-primary: #000;
+$text-highlight: #fff;
 $text-secondary: #999;
 $link-primary: #fff;
 $link-hover: #ccc;
@@ -179,6 +180,10 @@ textarea {
 .checkbox-lg {
     width: 16px;
     height: 16px;
+}
+
+.zonepricedisplay-name {
+    color: $text-highlight;
 }
 
 
